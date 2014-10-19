@@ -19,14 +19,20 @@ pub struct SubsystemEnumerator<'u> {
     enumerator: libudev_c::udev_enumerate
 }
 
-pub unsafe fn device_enumerator<'u>(udev: &'u Udev, parent: Option<libudev_c::udev_device>) -> DeviceEnumerator<'u> {
-    let enumerator = udev::new_enumerator(udev);
-    if enumerator.is_null() {
-        util::oom();
-    }
+unsafe fn new_enumerator<'u>(udev: &'u Udev) -> libudev_c::udev_enumerate {
+    // Check errno to check for ENOMEM
+    util::check_errno(|| {
+            libudev_c::udev_enumerate_new(udev::get_udev_ctx(udev))
+    }).unwrap().unwrap()
+}
+
+// Crate Private
+pub fn device_enumerator<'u>(udev: &'u Udev, parent: Option<libudev_c::udev_device>) -> DeviceEnumerator<'u> {
+    // Check errno to check for ENOMEM
+    let enumerator = unsafe { new_enumerator(udev) };
 
     if let Some(parent) = parent {
-        util::handle_error(libudev_c::udev_enumerate_add_match_parent(enumerator, parent));
+        unsafe { util::handle_error(libudev_c::udev_enumerate_add_match_parent(enumerator, parent)); }
     }
 
     DeviceEnumerator {
@@ -35,14 +41,11 @@ pub unsafe fn device_enumerator<'u>(udev: &'u Udev, parent: Option<libudev_c::ud
     }
 }
 
-pub unsafe fn subsystem_enumerator<'u>(udev: &'u Udev) -> SubsystemEnumerator<'u> {
-    let enumerator = udev::new_enumerator(udev);
-    if enumerator.is_null() {
-        util::oom();
-    }
+// Crate Private
+pub fn subsystem_enumerator<'u>(udev: &'u Udev) -> SubsystemEnumerator<'u> {
     SubsystemEnumerator {
         udev: udev,
-        enumerator: enumerator
+        enumerator: unsafe { new_enumerator(udev) }
     }
 }
 

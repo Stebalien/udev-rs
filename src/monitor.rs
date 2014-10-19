@@ -1,6 +1,7 @@
 use std::ptr;
 use std::from_str::FromStr;
-use libc::{fcntl, O_NONBLOCK, F_SETFL, F_GETFL};
+use libc::{fcntl, O_NONBLOCK, F_SETFL, F_GETFL, ENOMEM, EINVAL};
+use std::io::IoError;
 
 use device;
 use libudev_c;
@@ -31,18 +32,40 @@ pub struct Event {
     seqnum: u64
 }
 
+macro_rules! handle_ioerror( () => (
+        return match util::get_errno() {
+            ENOMEM | EINVAL => fail!("BUG"),
+            e => Err(IoError::from_errno(e as uint, true))
+        }
+))
+
 pub struct MonitorIterator<'m, 'u: 'm> {
     monitor: &'m Monitor<'u>
 }
 
-pub unsafe fn monitor<'u>(udev: &'u Udev, monitor: libudev_c::udev_monitor) -> Monitor<'u> {
-    let fd = libudev_c::udev_monitor_get_fd(monitor);
-    fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & !O_NONBLOCK);
+pub fn monitor<'u>(udev: &'u Udev, f: || -> libudev_c::udev_monitor) -> Result<Monitor<'u>, IoError> {
+    let monitor = match util::check_errno(f) {
+        Ok(Some(monitor))        => monitor,
+        Err(EINVAL) | Ok(None)  => fail!("BUG"),
+        Err(e)                  => return Err(IoError::from_errno(e as uint, true))
+    };
+    let fd = unsafe {
+        libudev_c::udev_monitor_get_fd(monitor)
+    };
 
-    Monitor {
+    let old_val = unsafe { fcntl(fd, F_GETFL) };
+    if old_val == -1 {
+        handle_ioerror!();
+    }
+
+    if unsafe { fcntl(fd, F_SETFL, old_val & !O_NONBLOCK) == -1 } {
+        handle_ioerror!();
+    }
+
+    Ok(Monitor {
         udev: udev,
         monitor: monitor
-    }
+    })
 }
 
 #[allow(unused_mut)]
@@ -110,8 +133,9 @@ impl FromStr for Action {
 impl<'m, 'u> Iterator<(Event, Device<'u>)> for MonitorIterator<'m, 'u> {
     fn next(&mut self) -> Option<(Event, Device<'u>)> {
         loop {
-            let dev = unsafe { libudev_c::udev_monitor_receive_device(self.monitor.monitor) };
-            if !dev.is_null() {
+            if let Ok(Some(dev)) = util::check_errno(|| unsafe {
+                libudev_c::udev_monitor_receive_device(self.monitor.monitor)
+            }) {
                 return Some((
                     Event {
                         action: from_str(unsafe {
@@ -121,9 +145,7 @@ impl<'m, 'u> Iterator<(Event, Device<'u>)> for MonitorIterator<'m, 'u> {
                                     libudev_c::udev_device_get_seqnum(dev)
                                 }
                     },
-                    unsafe {
-                        device::device(self.monitor.udev, dev, false).unwrap()
-                    }
+                    unsafe { device::device(self.monitor.udev, dev) }
                 ));
             }
         }

@@ -23,44 +23,39 @@ pub enum DeviceType {
     BlockDev
 }
 
-pub unsafe fn device<'u>(udev: &'u Udev, dev: libudev_c::udev_device, doref: bool) -> Option<Device<'u>> {
-    if dev.is_null() {
-        // TODO Check oom/errno
-        None
-    } else {
-        if doref { 
-            libudev_c::udev_device_ref(dev);
-        }
-        Some(Device { udev: udev, dev: dev })
-    }
+// Crate Private
+pub unsafe fn device<'u>(udev: &'u Udev, dev: libudev_c::udev_device) -> Device<'u> {
+    Device { udev: udev, dev: dev }
 }
 
 impl<'u> Device<'u> {
     pub fn parent(&self) -> Option<Device> {
-        unsafe {
-            device(
-                self.udev, 
-                libudev_c::udev_device_get_parent(self.dev),
-                true)
+        match util::check_errno(|| unsafe {
+            libudev_c::udev_device_ref(libudev_c::udev_device_get_parent(self.dev))
+        }) {
+            Ok(Some(dev)) => Some(unsafe { device(self.udev, dev) }),
+            _ => None
         }
     }
 
     pub fn parent_with_subsystem(&self, subsystem: &str) -> Option<Device> {
-        subsystem.with_c_str(|subsystem| unsafe {
-            device(
-                self.udev, 
-                libudev_c::udev_device_get_parent_with_subsystem_devtype(self.dev, subsystem, ptr::null()),
-                true)
-        })
+        match subsystem.with_c_str(|subsystem| util::check_errno(|| unsafe {
+            libudev_c::udev_device_ref(
+                libudev_c::udev_device_get_parent_with_subsystem_devtype(self.dev, subsystem, ptr::null()))
+        })) {
+            Ok(Some(dev)) => Some(unsafe { device(self.udev, dev) }),
+            _ => None
+        }
     }
 
     pub fn parent_with_subsystem_devtype(&self, subsystem: &str, devtype: &str) -> Option<Device> {
-        subsystem.with_c_str(|subsystem| devtype.with_c_str(|devtype| unsafe {
-            device(
-                self.udev, 
-                libudev_c::udev_device_get_parent_with_subsystem_devtype(self.dev, subsystem, devtype),
-                true)
-        }))
+        match subsystem.with_c_str(|subsystem| devtype.with_c_str(|devtype| util::check_errno(|| unsafe {
+            libudev_c::udev_device_ref(
+                libudev_c::udev_device_get_parent_with_subsystem_devtype(self.dev, subsystem, devtype))
+        }))) {
+            Ok(Some(dev)) => Some(unsafe { device(self.udev, dev) }),
+            _ => None
+        }
     }
 
     pub fn attribute<'s>(&'s self, attr: &str) -> Option<&'s str> {
@@ -182,9 +177,7 @@ impl<'u> Device<'u> {
     }
 
     pub fn children(&self) -> DeviceEnumerator<'u> {
-        unsafe {
-            enumerator::device_enumerator(self.udev, Some(self.dev))
-        }
+        enumerator::device_enumerator(self.udev, Some(self.dev))
     }
 }
 
