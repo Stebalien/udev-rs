@@ -114,9 +114,12 @@ impl<'u> Device<'u> {
         }
     }
 
-    pub fn devnum(&self) -> Devnum {
-        unsafe {
+    pub fn devnum(&self) -> Option<Devnum> {
+        match unsafe {
             libudev_c::udev_device_get_devnum(self.dev)
+        } {
+            0 => None,
+            n => Some(n)
         }
     }
 
