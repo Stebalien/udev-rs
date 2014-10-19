@@ -105,7 +105,7 @@ impl<'u> Device<'u> {
         }
     }
 
-    pub fn sysnum(&self) -> Option<uint> {
+    pub fn sysnum(&self) -> Option<u64> {
         match unsafe {
             util::c_to_str(libudev_c::udev_device_get_sysnum(self.dev))
         } {
