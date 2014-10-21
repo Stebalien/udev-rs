@@ -40,7 +40,7 @@ impl<'u> Hwdb<'u> {
     }
 }
 
-impl<'u> HwdbQuery<'u, 'u> {
+impl<'h, 'u> HwdbQuery<'h, 'u> {
     /// Iterate over the properties returned by this query.
     pub fn iter(&self) -> iter::Map<(&Hwdb, &str, Option<&str>),(&str, &str),UdevIterator<Hwdb>> {
         unsafe { iterator::udev_iterator(self.hwdb, self.entry) }.map(|(_, k, v)| (k, v.unwrap()))

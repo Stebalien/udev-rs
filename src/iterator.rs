@@ -7,7 +7,7 @@ pub struct UdevIterator<'p, T: 'p> {
     entry: libudev_c::udev_list_entry
 }
 
-pub unsafe fn udev_iterator<'p, T>(parent: &'p T, entry: libudev_c::udev_list_entry) -> UdevIterator<'p, T> {
+pub unsafe fn udev_iterator<T>(parent: &T, entry: libudev_c::udev_list_entry) -> UdevIterator<T> {
     UdevIterator {
         parent: parent,
         entry: entry
