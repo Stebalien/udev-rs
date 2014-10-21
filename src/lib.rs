@@ -1,4 +1,4 @@
-#![feature(unsafe_destructor, if_let, macro_rules)]
+#![feature(unsafe_destructor, if_let)]
 extern crate libc;
 
 pub use udev::Udev;
@@ -11,10 +11,7 @@ pub use device::{
     Devnum,
     DeviceType,
 };
-pub use enumerator::{
-    DeviceEnumerator,
-    SubsystemEnumerator,
-};
+pub use enumerator::Enumerator;
 pub use monitor::Monitor;
 
 mod libudev_c;

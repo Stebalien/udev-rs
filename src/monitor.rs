@@ -1,7 +1,5 @@
 use std::ptr;
 use std::from_str::FromStr;
-use libc::{fcntl, O_NONBLOCK, F_SETFL, F_GETFL, ENOMEM, EINVAL};
-use std::io::IoError;
 
 use device;
 use libudev_c;
@@ -32,40 +30,15 @@ pub struct Event {
     seqnum: u64
 }
 
-macro_rules! handle_ioerror( () => (
-        return match util::get_errno() {
-            ENOMEM | EINVAL => fail!("BUG"),
-            e => Err(IoError::from_errno(e as uint, true))
-        }
-))
-
 pub struct MonitorIterator<'m, 'u: 'm> {
     monitor: &'m Monitor<'u>
 }
 
-pub fn monitor<'u>(udev: &'u Udev, f: || -> libudev_c::udev_monitor) -> Result<Monitor<'u>, IoError> {
-    let monitor = match util::check_errno(f) {
-        Ok(Some(monitor))        => monitor,
-        Err(EINVAL) | Ok(None)  => fail!("BUG"),
-        Err(e)                  => return Err(IoError::from_errno(e as uint, true))
-    };
-    let fd = unsafe {
-        libudev_c::udev_monitor_get_fd(monitor)
-    };
-
-    let old_val = unsafe { fcntl(fd, F_GETFL) };
-    if old_val == -1 {
-        handle_ioerror!();
-    }
-
-    if unsafe { fcntl(fd, F_SETFL, old_val & !O_NONBLOCK) == -1 } {
-        handle_ioerror!();
-    }
-
-    Ok(Monitor {
+pub unsafe fn monitor<'u>(udev: &'u Udev, monitor: libudev_c::udev_monitor) -> Monitor<'u> {
+    Monitor {
         udev: udev,
         monitor: monitor
-    })
+    }
 }
 
 #[allow(unused_mut)]

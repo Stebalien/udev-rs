@@ -1,9 +1,7 @@
 use std::iter;
-use libc::EINVAL;
 
 use libudev_c;
-use udev;
-use util;
+use iterator;
 
 use udev::Udev;
 use iterator::UdevIterator;
@@ -19,15 +17,8 @@ pub struct HwdbQuery<'h, 'u: 'h> {
 }
 
 // Crate Private
-pub fn hwdb(udev: &Udev) -> Result<Hwdb, i32> {
-    match util::check_errno(|| unsafe {
-        libudev_c::udev_hwdb_new(udev::get_udev_ctx(udev))
-    }) {
-        Ok(Some(hwdb))  => Ok(Hwdb { udev: udev, hwdb: hwdb }),
-        Ok(None)        => Err(0i32),
-        Err(EINVAL)     => fail!("BUG"),
-        Err(e)          => Err(e)
-    }
+pub unsafe fn hwdb(udev: &Udev, hwdb: libudev_c::udev_hwdb) -> Hwdb {
+    Hwdb { udev: udev, hwdb: hwdb }
 }
 
 impl<'u> Hwdb<'u> {
@@ -46,7 +37,7 @@ impl<'u> Hwdb<'u> {
 
 impl<'u> HwdbQuery<'u, 'u> {
     pub fn iter(&self) -> iter::Map<(&Hwdb, &str, Option<&str>),(&str, &str),UdevIterator<Hwdb>> {
-        UdevIterator::new(self.hwdb, self.entry).map(|(_, k, v)| (k, v.unwrap()))
+        unsafe { iterator::udev_iterator(self.hwdb, self.entry) }.map(|(_, k, v)| (k, v.unwrap()))
     }
 }
 

@@ -7,10 +7,9 @@ use std::time::Duration;
 
 use libudev_c;
 use util;
-use enumerator;
+use iterator;
 
 use udev::Udev;
-use enumerator::DeviceEnumerator;
 use iterator::UdevIterator;
 
 pub struct Device<'u> {
@@ -26,6 +25,10 @@ pub enum DeviceType {
 // Crate Private
 pub unsafe fn device<'u>(udev: &'u Udev, dev: libudev_c::udev_device) -> Device<'u> {
     Device { udev: udev, dev: dev }
+}
+
+pub unsafe fn device_get_dev(device: &Device) -> libudev_c::udev_device {
+    device.dev
 }
 
 impl<'u> Device<'u> {
@@ -136,27 +139,27 @@ impl<'u> Device<'u> {
     }
 
     pub fn iter_devlinks(&self) -> iter::Map<(&Device,&str,Option<&str>),Path,UdevIterator<Device>> {
-        UdevIterator::new(self, unsafe {
-            libudev_c::udev_device_get_devlinks_list_entry(self.dev)
-        }).map(|(_, key, _)| Path::new(key))
+        unsafe {
+            iterator::udev_iterator(self, libudev_c::udev_device_get_devlinks_list_entry(self.dev))
+        }.map(|(_, key, _)| Path::new(key))
     }
 
     pub fn iter_tags(&self) -> iter::Map<(&Device,&str,Option<&str>),&str,UdevIterator<Device>> {
-        UdevIterator::new(self, unsafe {
-            libudev_c::udev_device_get_tags_list_entry(self.dev)
-        }).map(|(_, key, _)| key)
+        unsafe {
+            iterator::udev_iterator(self, libudev_c::udev_device_get_tags_list_entry(self.dev))
+        }.map(|(_, key, _)| key)
     }
 
     pub fn iter_properties(&self) -> iter::Map<(&Device,&str,Option<&str>),(&str, Option<&str>),UdevIterator<Device>> {
-        UdevIterator::new(self, unsafe {
-            libudev_c::udev_device_get_properties_list_entry(self.dev)
-        }).map(|(_, key, value)| (key, value))
+        unsafe {
+            iterator::udev_iterator(self, libudev_c::udev_device_get_properties_list_entry(self.dev))
+        }.map(|(_, key, value)| (key, value))
     }
 
     pub fn iter_attributes(& self) -> iter::Map<(&Device,&str,Option<&str>),&str,UdevIterator<Device>> {
-        UdevIterator::new(self, unsafe {
-            libudev_c::udev_device_get_sysattr_list_entry(self.dev)
-        }).map(|(_, key, _)| key)
+        unsafe {
+            iterator::udev_iterator(self, libudev_c::udev_device_get_sysattr_list_entry(self.dev))
+        }.map(|(_, key, _)| key)
     }
 
     pub fn time_since_initialized(&self) -> Option<Duration> {
@@ -177,10 +180,6 @@ impl<'u> Device<'u> {
         tag.with_c_str(|tag| unsafe {
             libudev_c::udev_device_has_tag(self.dev, tag) != 0
         })
-    }
-
-    pub fn children(&self) -> DeviceEnumerator<'u> {
-        enumerator::device_enumerator(self.udev, Some(self.dev))
     }
 }
 
