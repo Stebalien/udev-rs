@@ -34,34 +34,33 @@ pub struct MonitorIterator<'m, 'u: 'm> {
     monitor: &'m Monitor<'u>
 }
 
-pub unsafe fn monitor<'u>(udev: &'u Udev, monitor: libudev_c::udev_monitor) -> Monitor<'u> {
+pub unsafe fn monitor(udev: &Udev, monitor: libudev_c::udev_monitor) -> Monitor {
     Monitor {
         udev: udev,
         monitor: monitor
     }
 }
 
-#[allow(unused_mut)]
 impl<'u> Monitor<'u> {
-    pub fn filter_subsystem(mut self, subsystem: &str) -> Monitor<'u> {
+    pub fn filter_subsystem(self, subsystem: &str) -> Monitor<'u> {
         subsystem.with_c_str(|subsystem| util::handle_error(unsafe {
             libudev_c::udev_monitor_filter_add_match_subsystem_devtype(self.monitor, subsystem, ptr::null())
         }));
         self
     }
-    pub fn filter_subsystem_devtype(mut self, subsystem: &str, devtype: &str) -> Monitor<'u> {
+    pub fn filter_subsystem_devtype(self, subsystem: &str, devtype: &str) -> Monitor<'u> {
         subsystem.with_c_str(|subsystem| devtype.with_c_str(|devtype| util::handle_error(unsafe {
             libudev_c::udev_monitor_filter_add_match_subsystem_devtype(self.monitor, subsystem, devtype)
         })));
         self
     }
-    pub fn filter_tag(mut self, tag: &str) -> Monitor<'u> {
+    pub fn filter_tag(self, tag: &str) -> Monitor<'u> {
         tag.with_c_str(|tag| util::handle_error(unsafe {
             libudev_c::udev_monitor_filter_add_match_tag(self.monitor, tag)
         }));
         self
     }
-    pub fn unfilter(mut self) -> Monitor<'u> {
+    pub fn unfilter(self) -> Monitor<'u> {
         util::handle_error(unsafe {
             libudev_c::udev_monitor_filter_remove(self.monitor)
         });
