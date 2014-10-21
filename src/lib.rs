@@ -22,3 +22,26 @@ mod device;
 mod enumerator;
 mod monitor;
 mod iterator;
+
+#[test]
+fn test_ttys() {
+    let udev = Udev::new();
+    let mut vec = Vec::with_capacity(64);
+    let mut found_tty = false;
+    for dev in udev.enumerator().match_subsystem("tty").scan_devices().iter() {
+        assert!(dev.subsystem().unwrap() == "tty");
+        if dev.sysname().starts_with("tty") {
+            match dev.sysnum() {
+                Some(num) => vec.push(num),
+                None => {
+                    assert!(!found_tty);
+                    found_tty = true;
+                }
+            }
+        }
+    }
+
+    vec.sort();
+    assert!(vec.into_iter().zip(range(0u64, 64u64)).all(|(i, j)| i == j));
+}
+
