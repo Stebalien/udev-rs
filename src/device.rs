@@ -1,5 +1,5 @@
 use std::ptr;
-use std::io::IoError;
+use std::io::{IoError, standard_error, FileNotFound};
 use std::fmt;
 use libc::dev_t;
 use std::iter;
@@ -61,10 +61,14 @@ impl<'u> Device<'u> {
         }
     }
 
-    pub fn attribute<'s>(&'s self, attr: &str) -> Option<&'s str> {
-        attr.with_c_str(|cstr| unsafe {
-            util::c_to_str(libudev_c::udev_device_get_sysattr_value(self.dev, cstr))
-        })
+    pub fn attribute<'s>(&'s self, attr: &str) -> Result<&'s str, IoError> {
+        match attr.with_c_str(|cstr| util::check_errno(|| unsafe {
+            libudev_c::udev_device_get_sysattr_value(self.dev, cstr)
+        })) {
+            Ok(Some(val)) => Ok(unsafe { util::c_to_str(val) }.unwrap()),
+            Ok(None) => Err(standard_error(FileNotFound)),
+            Err(errno) => Err(IoError::from_errno(errno as uint, true)),
+        }
     }
 
     pub fn set_attribute(&self, attr: &str, value: &str) -> Result<(), IoError> {
