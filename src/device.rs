@@ -32,6 +32,7 @@ pub unsafe fn device_get_dev(device: &Device) -> libudev_c::udev_device {
 }
 
 impl<'u> Device<'u> {
+    /// Get the device's parent if one exists.
     pub fn parent(&self) -> Option<Device> {
         match util::check_errno(|| unsafe {
             libudev_c::udev_device_ref(libudev_c::udev_device_get_parent(self.dev))
@@ -41,6 +42,7 @@ impl<'u> Device<'u> {
         }
     }
 
+    /// Get the first parent with the specified subsystem.
     pub fn parent_with_subsystem(&self, subsystem: &str) -> Option<Device> {
         match subsystem.with_c_str(|subsystem| util::check_errno(|| unsafe {
             libudev_c::udev_device_ref(
@@ -51,6 +53,7 @@ impl<'u> Device<'u> {
         }
     }
 
+    /// Get the first parent with the specified subsystem and devtype.
     pub fn parent_with_subsystem_devtype(&self, subsystem: &str, devtype: &str) -> Option<Device> {
         match subsystem.with_c_str(|subsystem| devtype.with_c_str(|devtype| util::check_errno(|| unsafe {
             libudev_c::udev_device_ref(
@@ -61,6 +64,7 @@ impl<'u> Device<'u> {
         }
     }
 
+    /// Read a sysfs attribute.
     pub fn attribute<'s>(&'s self, attr: &str) -> Result<&'s str, IoError> {
         match attr.with_c_str(|cstr| util::check_errno(|| unsafe {
             libudev_c::udev_device_get_sysattr_value(self.dev, cstr)
@@ -71,6 +75,7 @@ impl<'u> Device<'u> {
         }
     }
 
+    /// Write a sysfs attribute.
     pub fn set_attribute(&self, attr: &str, value: &str) -> Result<(), IoError> {
         attr.with_c_str(|attr| value.with_c_str(|value| match unsafe {
             libudev_c::udev_device_set_sysattr_value(self.dev, attr, value)
@@ -81,37 +86,46 @@ impl<'u> Device<'u> {
         }))
     }
 
+    /// Get the path to the device (minus `/sys`).
     pub fn devpath<'s>(&'s self) -> &'s str {
         unsafe {
             util::c_to_str(libudev_c::udev_device_get_devpath(self.dev)).unwrap()
         }
     }
 
+    /// Get the full path to the device (including `/sys`).
     pub fn syspath<'s>(&'s self) -> Path {
         unsafe {
             Path::new(util::c_to_str(libudev_c::udev_device_get_syspath(self.dev)).unwrap())
         }
     }
 
+    /// Get the device name.
+    ///
+    /// E.g. wlan0
     pub fn sysname<'s>(&'s self) -> &'s str {
         unsafe {
             util::c_to_str(libudev_c::udev_device_get_sysname(self.dev)).unwrap()
         }
     }
 
-
+    /// Get the devices subsystem
     pub fn subsystem<'s>(&'s self) -> Option<&'s str> {
         unsafe {
             util::c_to_str(libudev_c::udev_device_get_subsystem(self.dev))
         }
     }
 
+    /// Get the devices devtype
     pub fn devtype<'s>(&'s self) -> Option<&'s str> {
         unsafe {
             util::c_to_str(libudev_c::udev_device_get_devtype(self.dev))
         }
     }
 
+    /// Get the devices sysnum.
+    ///
+    /// E.g. the X in ethX, wlanX, etc.
     pub fn sysnum(&self) -> Option<u64> {
         match unsafe {
             util::c_to_str(libudev_c::udev_device_get_sysnum(self.dev))
@@ -121,6 +135,7 @@ impl<'u> Device<'u> {
         }
     }
 
+    /// Get the device's devnum.
     pub fn devnum(&self) -> Option<Devnum> {
         match unsafe {
             libudev_c::udev_device_get_devnum(self.dev)
@@ -130,42 +145,53 @@ impl<'u> Device<'u> {
         }
     }
 
+    /// Get the device's driver.
     pub fn driver<'s>(&'s self) -> Option<&'s str> {
         unsafe {
             util::c_to_str(libudev_c::udev_device_get_driver(self.dev))
         }
     }
 
+    /// Get the device's devnode
+    ///
+    /// E.g. `/dev/sda`
     pub fn devnode<'s>(&'s self) -> Option<Path> {
         unsafe {
             util::c_to_str(libudev_c::udev_device_get_devnode(self.dev))
         }.map(|path| Path::new(path))
     }
 
+    /// Iterate over the device's devlinks
+    ///
+    /// E.g. the symlinks in `/dev/disk/by-*/`
     pub fn iter_devlinks(&self) -> iter::Map<(&Device,&str,Option<&str>),Path,UdevIterator<Device>> {
         unsafe {
             iterator::udev_iterator(self, libudev_c::udev_device_get_devlinks_list_entry(self.dev))
         }.map(|(_, key, _)| Path::new(key))
     }
 
+    /// Iterate over the device's tags.
     pub fn iter_tags(&self) -> iter::Map<(&Device,&str,Option<&str>),&str,UdevIterator<Device>> {
         unsafe {
             iterator::udev_iterator(self, libudev_c::udev_device_get_tags_list_entry(self.dev))
         }.map(|(_, key, _)| key)
     }
 
+    /// Iterate over the device's properties.
     pub fn iter_properties(&self) -> iter::Map<(&Device,&str,Option<&str>),(&str, Option<&str>),UdevIterator<Device>> {
         unsafe {
             iterator::udev_iterator(self, libudev_c::udev_device_get_properties_list_entry(self.dev))
         }.map(|(_, key, value)| (key, value))
     }
 
+    /// Iterate over the device's sysfs attribute names
     pub fn iter_attributes(& self) -> iter::Map<(&Device,&str,Option<&str>),&str,UdevIterator<Device>> {
         unsafe {
             iterator::udev_iterator(self, libudev_c::udev_device_get_sysattr_list_entry(self.dev))
         }.map(|(_, key, _)| key)
     }
 
+    /// Get the time since the device was initialized by udev.
     pub fn time_since_initialized(&self) -> Option<Duration> {
         let usec = unsafe { libudev_c::udev_device_get_usec_since_initialized(self.dev) };
         if usec == 0 {
@@ -176,10 +202,12 @@ impl<'u> Device<'u> {
         }
     }
 
+    /// Determine if the device has been initialized.
     pub fn is_initialized(&self) -> bool {
         unsafe { libudev_c::udev_device_get_is_initialized(self.dev) != 0 }
     }
 
+    /// Check whether the device is tagged with a given tag.
     pub fn has_tag(&self, tag: &str) -> bool {
         tag.with_c_str(|tag| unsafe {
             libudev_c::udev_device_has_tag(self.dev, tag) != 0
