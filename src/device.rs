@@ -136,10 +136,10 @@ impl<'u> Device<'u> {
         }
     }
 
-    pub fn devnode<'s>(&'s self) -> Option<&'s str> {
+    pub fn devnode<'s>(&'s self) -> Option<Path> {
         unsafe {
             util::c_to_str(libudev_c::udev_device_get_devnode(self.dev))
-        }
+        }.map(|path| Path::new(path))
     }
 
     pub fn iter_devlinks(&self) -> iter::Map<(&Device,&str,Option<&str>),Path,UdevIterator<Device>> {
