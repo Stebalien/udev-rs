@@ -2,7 +2,6 @@ use std::ptr;
 use std::io::{IoError, standard_error, FileNotFound};
 use std::fmt;
 use libc::dev_t;
-use std::iter;
 use std::time::Duration;
 
 use libudev_c;
@@ -10,7 +9,7 @@ use util;
 use iterator;
 
 use udev::Udev;
-use iterator::UdevIterator;
+use iterator::{KeyIterator, KeyOptValueIterator, PathIterator};
 
 pub struct Device<'u> {
     pub udev: &'u Udev,
@@ -146,7 +145,7 @@ impl<'u> Device<'u> {
     }
 
     /// Get the device's driver.
-    pub fn driver<'s>(&'s self) -> Option<&'s str> {
+    pub fn driver(&self) -> Option<&str> {
         unsafe {
             util::c_to_str(libudev_c::udev_device_get_driver(self.dev))
         }
@@ -155,7 +154,7 @@ impl<'u> Device<'u> {
     /// Get the device's devnode
     ///
     /// E.g. `/dev/sda`
-    pub fn devnode<'s>(&'s self) -> Option<Path> {
+    pub fn devnode(& self) -> Option<Path> {
         unsafe {
             util::c_to_str(libudev_c::udev_device_get_devnode(self.dev))
         }.map(|path| Path::new(path))
@@ -164,31 +163,31 @@ impl<'u> Device<'u> {
     /// Iterate over the device's devlinks
     ///
     /// E.g. the symlinks in `/dev/disk/by-*/`
-    pub fn iter_devlinks(&self) -> iter::Map<(&Device,&str,Option<&str>),Path,UdevIterator<Device>> {
+    pub fn iter_devlinks(&self) -> PathIterator {
         unsafe {
-            iterator::udev_iterator(self, libudev_c::udev_device_get_devlinks_list_entry(self.dev))
-        }.map(|(_, key, _)| Path::new(key))
+            iterator::path_iterator(self, libudev_c::udev_device_get_devlinks_list_entry(self.dev))
+        }
     }
 
     /// Iterate over the device's tags.
-    pub fn iter_tags(&self) -> iter::Map<(&Device,&str,Option<&str>),&str,UdevIterator<Device>> {
+    pub fn iter_tags(&self) -> KeyIterator {
         unsafe {
-            iterator::udev_iterator(self, libudev_c::udev_device_get_tags_list_entry(self.dev))
-        }.map(|(_, key, _)| key)
+            iterator::key_iterator(self, libudev_c::udev_device_get_tags_list_entry(self.dev))
+        }
     }
 
     /// Iterate over the device's properties.
-    pub fn iter_properties(&self) -> iter::Map<(&Device,&str,Option<&str>),(&str, Option<&str>),UdevIterator<Device>> {
+    pub fn iter_properties(&self) -> KeyOptValueIterator {
         unsafe {
-            iterator::udev_iterator(self, libudev_c::udev_device_get_properties_list_entry(self.dev))
-        }.map(|(_, key, value)| (key, value))
+            iterator::key_opt_value_iterator(self, libudev_c::udev_device_get_properties_list_entry(self.dev))
+        }
     }
 
     /// Iterate over the device's sysfs attribute names
-    pub fn iter_attributes(& self) -> iter::Map<(&Device,&str,Option<&str>),&str,UdevIterator<Device>> {
+    pub fn iter_attributes(& self) -> KeyIterator {
         unsafe {
-            iterator::udev_iterator(self, libudev_c::udev_device_get_sysattr_list_entry(self.dev))
-        }.map(|(_, key, _)| key)
+            iterator::key_iterator(self, libudev_c::udev_device_get_sysattr_list_entry(self.dev))
+        }
     }
 
     /// Get the time since the device was initialized by udev.

@@ -26,8 +26,8 @@ pub enum Action {
 
 #[deriving(Show)]
 pub struct Event {
-    action: Action,
-    seqnum: u64
+    pub action: Action,
+    pub seqnum: u64
 }
 
 pub struct MonitorIterator<'m, 'u: 'm> {
@@ -42,30 +42,49 @@ pub unsafe fn monitor(udev: &Udev, monitor: libudev_c::udev_monitor) -> Monitor 
 }
 
 impl<'u> Monitor<'u> {
+    /// Filter by subsystem.
+    ///
+    /// Exclude devices that don't match the specified subsystem or a previously specified
+    /// subsystem.
     pub fn filter_subsystem(self, subsystem: &str) -> Monitor<'u> {
         subsystem.with_c_str(|subsystem| util::handle_error(unsafe {
             libudev_c::udev_monitor_filter_add_match_subsystem_devtype(self.monitor, subsystem, ptr::null())
         }));
         self
     }
+    /// Filter by subsystem/devtype combination.
+    ///
+    /// Exclude devices that don't match the specified subsystem/devtype combination or a
+    /// previously specified subsystem/devtype combination (or any subsystem previously specified
+    /// in a `filter_subsystem` invocation).
     pub fn filter_subsystem_devtype(self, subsystem: &str, devtype: &str) -> Monitor<'u> {
         subsystem.with_c_str(|subsystem| devtype.with_c_str(|devtype| util::handle_error(unsafe {
             libudev_c::udev_monitor_filter_add_match_subsystem_devtype(self.monitor, subsystem, devtype)
         })));
         self
     }
+    /// Filter by tag.
+    ///
+    /// Exclude devices that don't match the specified tag or a previously specified tag.
     pub fn filter_tag(self, tag: &str) -> Monitor<'u> {
         tag.with_c_str(|tag| util::handle_error(unsafe {
             libudev_c::udev_monitor_filter_add_match_tag(self.monitor, tag)
         }));
         self
     }
+
+    /// Reset all filters on this monitor. No devices will be excluded.
     pub fn unfilter(self) -> Monitor<'u> {
         util::handle_error(unsafe {
             libudev_c::udev_monitor_filter_remove(self.monitor)
         });
         self
     }
+
+    /// Iterate over udev events.
+    ///
+    /// 1. The returned iterator will block on calls to next until their a device is available.
+    /// 2. The returned iterator will never end (next will never return None).
     pub fn iter<'m>(&'m self) -> MonitorIterator<'m, 'u> {
         util::handle_error(unsafe {
             // Technically this mutates but we're single threaded anyways. Basically, having two

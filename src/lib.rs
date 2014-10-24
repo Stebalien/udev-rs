@@ -4,15 +4,30 @@ extern crate libc;
 pub use udev::Udev;
 pub use hwdb::{
     Hwdb,
-    HwdbQuery
+    HwdbQuery,
 };
 pub use device::{
     Device,
     Devnum,
     DeviceType,
 };
-pub use enumerator::Enumerator;
-pub use monitor::Monitor;
+pub use enumerator::{
+    Enumerator,
+    DeviceIterator,
+};
+pub use monitor::{
+    Monitor,
+    MonitorIterator,
+    Event,
+    Action,
+};
+
+pub use iterator::{
+    KeyValueIterator,
+    KeyOptValueIterator,
+    KeyIterator,
+    PathIterator,
+};
 
 mod libudev_c;
 mod udev;

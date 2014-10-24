@@ -1,10 +1,8 @@
-use std::iter;
-
 use libudev_c;
 use iterator;
 
+use iterator::KeyValueIterator;
 use udev::Udev;
-use iterator::UdevIterator;
 
 pub struct Hwdb<'u> {
     pub udev: &'u Udev,
@@ -42,11 +40,12 @@ impl<'u> Hwdb<'u> {
 
 impl<'h, 'u> HwdbQuery<'h, 'u> {
     /// Iterate over the properties returned by this query.
-    pub fn iter(&self) -> iter::Map<(&Hwdb, &str, Option<&str>),(&str, &str),UdevIterator<Hwdb>> {
-        unsafe { iterator::udev_iterator(self.hwdb, self.entry) }.map(|(_, k, v)| (k, v.unwrap()))
+    pub fn iter(&self) -> KeyValueIterator {
+        unsafe {
+            iterator::key_value_iterator(self.hwdb, self.entry)
+        }
     }
 }
-
 
 #[unsafe_destructor]
 impl<'u> Drop for Hwdb<'u> {
