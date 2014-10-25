@@ -16,12 +16,13 @@ pub struct Monitor<'u> {
 
 #[deriving(Show)]
 pub enum Action {
-    Add,
-    Remove,
-    Change,
-    Move,
-    Online,
-    Offline
+    AddAction,
+    RemoveAction,
+    ChangeAction,
+    MoveAction,
+    OnlineAction,
+    OfflineAction,
+    OtherAction(String)
 }
 
 #[deriving(Show)]
@@ -110,13 +111,13 @@ impl<'u> Drop for Monitor<'u> {
 impl FromStr for Action {
     fn from_str(s: &str) -> Option<Action> {
         match s {
-            "add"       => Some(Add),
-            "remove"    => Some(Remove),
-            "change"    => Some(Change),
-            "move"      => Some(Move),
-            "online"    => Some(Online),
-            "offline"   => Some(Offline),
-            _           => None
+            "add"       => Some(AddAction),
+            "remove"    => Some(RemoveAction),
+            "change"    => Some(ChangeAction),
+            "move"      => Some(MoveAction),
+            "online"    => Some(OnlineAction),
+            "offline"   => Some(OfflineAction),
+            _           => Some(OtherAction(s.to_string())),
         }
     }
 }

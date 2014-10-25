@@ -19,7 +19,16 @@ pub use monitor::{
     Monitor,
     MonitorIterator,
     Event,
+
+    // My kingdome for a scope
     Action,
+    AddAction,
+    RemoveAction,
+    ChangeAction,
+    MoveAction,
+    OfflineAction,
+    OnlineAction,
+    OtherAction,
 };
 
 pub use iterator::{
