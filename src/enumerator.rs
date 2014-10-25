@@ -90,10 +90,10 @@ impl<'u> Enumerator<'u> {
         self
     }
 
-    /// Only include children of the specified device.
+    /// Only include the specified device and its children.
     ///
     /// All devices added by future scans (until the parent is changed/cleared)
-    /// will have the specified parent.
+    /// will have/be the specified parent.
     pub fn match_parent(self, parent: &Device) -> Enumerator<'u> {
         unsafe {
             util::handle_error(libudev_c::udev_enumerate_add_match_parent(self.enumerator, device::device_get_dev(parent)));
