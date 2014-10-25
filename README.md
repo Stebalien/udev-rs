@@ -6,7 +6,12 @@ simpler/nicer than C).
 
 [API](https://stebalien.github.io/udev-rs/udev/)
 
-## Notes
+## !!!WARNING!!!
+
+This is alpha quality and my first rust project. Please comment/review my code
+(I'm probably doing quite a few things wrong).
+
+## Implementation Notes
 
 ### Threading
 
@@ -31,6 +36,13 @@ up a list of devices in an enumerator (by repeatedly calling `match_*` and then
 `scan_*`).
 
 In the future, I might consider adding a simpler (saner) query interface.
+
+### Iterator Proliferation
+
+You might notice the plethera of iterators that basically just map/filter the
+private UdevIterator. I used to use map/filter but then I ended up exposing
+implementation details in return types. If there is a better way to do this
+(that rust currently supports...), please tell me.
 
 ## Examples
 
