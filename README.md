@@ -4,6 +4,8 @@ Udev bindings for rust
 These bindings effectivly map one-to-one to libudev (but calling them is much
 simpler/nicer than C).
 
+[API](https://stebalien.github.io/udev-rs/udev/)
+
 ## Notes
 
 ### Threading
