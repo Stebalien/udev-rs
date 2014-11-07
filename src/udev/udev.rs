@@ -2,17 +2,23 @@ use std::kinds::marker::NoSync;
 use std::io::IoError;
 use libc::{fcntl, O_NONBLOCK, F_SETFL, F_GETFL, ENOMEM, EINVAL};
 
-use device;
-use util;
-use hwdb;
-use monitor;
-use enumerator;
-use libudev_c;
+use udev::{
+    device,
+    util,
+    hwdb,
+    monitor,
+    enumerator,
+    libudev_c,
+};
 
-use device::{Device, DeviceType, Devnum};
-use hwdb::{Hwdb};
-use monitor::Monitor;
-use enumerator::Enumerator;
+use udev::device::{
+    Device,
+    DeviceType,
+    Devnum
+};
+use udev::hwdb::Hwdb;
+use udev::monitor::Monitor;
+use udev::enumerator::Enumerator;
 
 pub struct Udev {
     // Not thread safe. As all children will hold a reference, this makes everything safe.
