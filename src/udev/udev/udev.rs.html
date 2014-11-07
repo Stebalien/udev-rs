@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/udev.rs`.">
+    <meta name="description" content="Source to the Rust file `/udev/udev.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>udev.rs.html -- source</title>
 
-    <link rel="stylesheet" type="text/css" href="../../../../../../../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../../../../../../../../main.css">
 
     
     
@@ -192,22 +192,34 @@
 <span id='150'>150</span>
 <span id='151'>151</span>
 <span id='152'>152</span>
+<span id='153'>153</span>
+<span id='154'>154</span>
+<span id='155'>155</span>
+<span id='156'>156</span>
+<span id='157'>157</span>
+<span id='158'>158</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>kinds</span>::<span class='ident'>marker</span>::<span class='ident'>NoSync</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>io</span>::<span class='ident'>IoError</span>;
 <span class='kw'>use</span> <span class='ident'>libc</span>::{<span class='ident'>fcntl</span>, <span class='ident'>O_NONBLOCK</span>, <span class='ident'>F_SETFL</span>, <span class='ident'>F_GETFL</span>, <span class='ident'>ENOMEM</span>, <span class='ident'>EINVAL</span>};
 
-<span class='kw'>use</span> <span class='ident'>device</span>;
-<span class='kw'>use</span> <span class='ident'>util</span>;
-<span class='kw'>use</span> <span class='ident'>hwdb</span>;
-<span class='kw'>use</span> <span class='ident'>monitor</span>;
-<span class='kw'>use</span> <span class='ident'>enumerator</span>;
-<span class='kw'>use</span> <span class='ident'>libudev_c</span>;
+<span class='kw'>use</span> <span class='ident'>udev</span>::{
+    <span class='ident'>device</span>,
+    <span class='ident'>util</span>,
+    <span class='ident'>hwdb</span>,
+    <span class='ident'>monitor</span>,
+    <span class='ident'>enumerator</span>,
+    <span class='ident'>libudev_c</span>,
+};
 
-<span class='kw'>use</span> <span class='ident'>device</span>::{<span class='ident'>Device</span>, <span class='ident'>DeviceType</span>, <span class='ident'>Devnum</span>};
-<span class='kw'>use</span> <span class='ident'>hwdb</span>::{<span class='ident'>Hwdb</span>};
-<span class='kw'>use</span> <span class='ident'>monitor</span>::<span class='ident'>Monitor</span>;
-<span class='kw'>use</span> <span class='ident'>enumerator</span>::<span class='ident'>Enumerator</span>;
+<span class='kw'>use</span> <span class='ident'>udev</span>::<span class='ident'>device</span>::{
+    <span class='ident'>Device</span>,
+    <span class='ident'>DeviceType</span>,
+    <span class='ident'>Devnum</span>
+};
+<span class='kw'>use</span> <span class='ident'>udev</span>::<span class='ident'>hwdb</span>::<span class='ident'>Hwdb</span>;
+<span class='kw'>use</span> <span class='ident'>udev</span>::<span class='ident'>monitor</span>::<span class='ident'>Monitor</span>;
+<span class='kw'>use</span> <span class='ident'>udev</span>::<span class='ident'>enumerator</span>::<span class='ident'>Enumerator</span>;
 
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Udev</span> {
     <span class='comment'>// Not thread safe. As all children will hold a reference, this makes everything safe.</span>
@@ -231,7 +243,7 @@
             <span class='ident'>libudev_c</span>::<span class='ident'>udev_monitor_new_from_netlink</span>(<span class='self'>self</span>.<span class='ident'>udev</span>, <span class='ident'>name</span>)
         })) {
             <span class='prelude-val'>Ok</span>(<span class='prelude-val'>Some</span>(<span class='ident'>monitor</span>))       <span class='op'>=&gt;</span> <span class='ident'>monitor</span>,
-            <span class='prelude-val'>Err</span>(<span class='ident'>EINVAL</span>) <span class='op'>|</span> <span class='prelude-val'>Ok</span>(<span class='prelude-val'>None</span>)  <span class='op'>=&gt;</span> <span class='macro'>fail</span><span class='macro'>!</span>(<span class='string'>&quot;BUG&quot;</span>),
+            <span class='prelude-val'>Err</span>(<span class='ident'>EINVAL</span>) <span class='op'>|</span> <span class='prelude-val'>Ok</span>(<span class='prelude-val'>None</span>)  <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;BUG&quot;</span>),
             <span class='prelude-val'>Err</span>(<span class='ident'>e</span>)                  <span class='op'>=&gt;</span> <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>IoError</span>::<span class='ident'>from_errno</span>(<span class='ident'>e</span> <span class='kw'>as</span> <span class='ident'>uint</span>, <span class='boolval'>true</span>))
         };
         <span class='kw'>let</span> <span class='ident'>fd</span> <span class='op'>=</span> <span class='kw'>unsafe</span> {
@@ -241,7 +253,7 @@
         <span class='kw'>let</span> <span class='ident'>old_val</span> <span class='op'>=</span> <span class='kw'>unsafe</span> { <span class='ident'>fcntl</span>(<span class='ident'>fd</span>, <span class='ident'>F_GETFL</span>) };
         <span class='kw'>if</span> <span class='ident'>old_val</span> <span class='op'>==</span> <span class='op'>-</span><span class='number'>1</span> <span class='op'>||</span> <span class='kw'>unsafe</span> { <span class='ident'>fcntl</span>(<span class='ident'>fd</span>, <span class='ident'>F_SETFL</span>, <span class='ident'>old_val</span> <span class='kw-2'>&amp;</span> <span class='op'>!</span><span class='ident'>O_NONBLOCK</span>) <span class='op'>==</span> <span class='op'>-</span><span class='number'>1</span> } {
             <span class='kw'>return</span> <span class='kw'>match</span> <span class='ident'>util</span>::<span class='ident'>get_errno</span>() {
-                <span class='ident'>ENOMEM</span> <span class='op'>|</span> <span class='ident'>EINVAL</span> <span class='op'>=&gt;</span> <span class='macro'>fail</span><span class='macro'>!</span>(<span class='string'>&quot;BUG&quot;</span>),
+                <span class='ident'>ENOMEM</span> <span class='op'>|</span> <span class='ident'>EINVAL</span> <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;BUG&quot;</span>),
                 <span class='ident'>e</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='ident'>IoError</span>::<span class='ident'>from_errno</span>(<span class='ident'>e</span> <span class='kw'>as</span> <span class='ident'>uint</span>, <span class='boolval'>true</span>))
             }
         }
@@ -294,7 +306,7 @@
         }) {
             <span class='prelude-val'>Ok</span>(<span class='prelude-val'>Some</span>(<span class='ident'>hwdb</span>))  <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(<span class='kw'>unsafe</span> { <span class='ident'>hwdb</span>::<span class='ident'>hwdb</span>(<span class='self'>self</span>, <span class='ident'>hwdb</span>) }),
             <span class='prelude-val'>Ok</span>(<span class='prelude-val'>None</span>)        <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='number'>0i32</span>),
-            <span class='prelude-val'>Err</span>(<span class='ident'>EINVAL</span>)     <span class='op'>=&gt;</span> <span class='macro'>fail</span><span class='macro'>!</span>(<span class='string'>&quot;BUG&quot;</span>),
+            <span class='prelude-val'>Err</span>(<span class='ident'>EINVAL</span>)     <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;BUG&quot;</span>),
             <span class='prelude-val'>Err</span>(<span class='ident'>e</span>)          <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='ident'>e</span>)
         }
     }
@@ -385,13 +397,13 @@
     
 
     <script>
-        window.rootPath = "../../../../../../../../";
+        window.rootPath = "../../../../../../../../../";
         window.currentCrate = "udev";
         window.playgroundUrl = "";
     </script>
-    <script src="../../../../../../../../jquery.js"></script>
-    <script src="../../../../../../../../main.js"></script>
+    <script src="../../../../../../../../../jquery.js"></script>
+    <script src="../../../../../../../../../main.js"></script>
     
-    <script async src="../../../../../../../../search-index.js"></script>
+    <script async src="../../../../../../../../../search-index.js"></script>
 </body>
 </html>

@@ -1,8 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="refresh" content="0;URL=../../udev/struct.Monitor.html">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Monitor` struct in crate `udev`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Monitor">
+
+    <title>udev::monitor::Monitor - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+    
 </head>
-<body>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'><a href='../index.html'>udev</a>::<wbr><a href='index.html'>monitor</a></p><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.Event.html'>Event</a><a class='struct current' href='struct.Monitor.html'>Monitor</a></div><div class='block enum'><h2>Enums</h2><a class='enum ' href='enum.Action.html'>Action</a></div>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>udev</a>::<wbr><a href='index.html'>monitor</a>::<wbr><a class='struct' href=''>Monitor</a><wbr></span><span class='out-of-band'><span id='render-detail'>
+            <a id="collapse-all" href="#">[-]
+            </a>&nbsp;<a id="expand-all" href="#">[+]</a>
+        </span><a id='src-3205' href='../../src/udev/udev/monitor.rs.html#14-17'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Monitor&lt;'u&gt; {
+    pub udev: &amp;'u <a class='struct' href='../../udev/struct.Udev.html' title='udev::Udev'>Udev</a>,
+    // some fields omitted
+}</pre><h2 class='fields'>Fields</h2>
+<table><tr><td id='structfield.udev'><a class='stability Unmarked' title='No stability level'></a><code>udev</code></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;'u&gt; <a class='struct' href='../../udev/monitor/struct.Monitor.html' title='udev::monitor::Monitor'>Monitor</a>&lt;'u&gt;</code></h3><div class='impl-methods'><h4 id='method.filter_by_subsystem' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.filter_by_subsystem' class='fnname'>filter_by_subsystem</a>(self, subsystem: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='struct' href='../../udev/monitor/struct.Monitor.html' title='udev::monitor::Monitor'>Monitor</a>&lt;'u&gt;</code></h4>
+<div class='docblock'><p>Filter by subsystem.</p>
+
+<p>Exclude devices that don&#39;t match the specified subsystem or a previously specified
+subsystem.</p>
+</div><h4 id='method.filter_by_subsystem_devtype' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.filter_by_subsystem_devtype' class='fnname'>filter_by_subsystem_devtype</a>(self, subsystem: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, devtype: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='struct' href='../../udev/monitor/struct.Monitor.html' title='udev::monitor::Monitor'>Monitor</a>&lt;'u&gt;</code></h4>
+<div class='docblock'><p>Filter by subsystem/devtype combination.</p>
+
+<p>Exclude devices that don&#39;t match the specified subsystem/devtype combination or a
+previously specified subsystem/devtype combination (or any subsystem previously specified
+in a <code>filter_subsystem</code> invocation).</p>
+</div><h4 id='method.filter_by_tag' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.filter_by_tag' class='fnname'>filter_by_tag</a>(self, tag: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='struct' href='../../udev/monitor/struct.Monitor.html' title='udev::monitor::Monitor'>Monitor</a>&lt;'u&gt;</code></h4>
+<div class='docblock'><p>Filter by tag.</p>
+
+<p>Exclude devices that don&#39;t match the specified tag or a previously specified tag.</p>
+</div><h4 id='method.clear_filters' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.clear_filters' class='fnname'>clear_filters</a>(self) -&gt; <a class='struct' href='../../udev/monitor/struct.Monitor.html' title='udev::monitor::Monitor'>Monitor</a>&lt;'u&gt;</code></h4>
+<div class='docblock'><p>Reset all filters on this monitor. No devices will be excluded.</p>
+</div><h4 id='method.iter' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.iter' class='fnname'>iter</a>&lt;'m&gt;(&amp;'m self) -&gt; MonitorIterator&lt;'m, 'u&gt;</code></h4>
+<div class='docblock'><p>Iterate over udev events.</p>
+
+<ol>
+<li>The returned iterator will block on calls to next until their a device is available.</li>
+<li>The returned iterator will never end (next will never return None).</li>
+</ol>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;'u&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../../udev/monitor/struct.Monitor.html' title='udev::monitor::Monitor'>Monitor</a>&lt;'u&gt;</code></h3><div class='impl-methods'><h4 id='method.drop' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.drop' class='fnname'>drop</a>(&amp;mut self)</code></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code>, <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "udev";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script async src="../../search-index.js"></script>
 </body>
 </html>

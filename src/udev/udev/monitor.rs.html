@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/monitor.rs`.">
+    <meta name="description" content="Source to the Rust file `/udev/monitor.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>monitor.rs.html -- source</title>
 
-    <link rel="stylesheet" type="text/css" href="../../../../../../../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../../../../../../../../main.css">
 
     
     
@@ -186,16 +186,21 @@
 <span id='144'>144</span>
 <span id='145'>145</span>
 <span id='146'>146</span>
+<span id='147'>147</span>
+<span id='148'>148</span>
+<span id='149'>149</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>ptr</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>from_str</span>::<span class='ident'>FromStr</span>;
 
-<span class='kw'>use</span> <span class='ident'>device</span>;
-<span class='kw'>use</span> <span class='ident'>libudev_c</span>;
-<span class='kw'>use</span> <span class='ident'>util</span>;
+<span class='kw'>use</span> <span class='ident'>udev</span>::{
+    <span class='ident'>device</span>,
+    <span class='ident'>libudev_c</span>,
+    <span class='ident'>util</span>,
+};
 
-<span class='kw'>use</span> <span class='ident'>udev</span>::<span class='ident'>Udev</span>;
-<span class='kw'>use</span> <span class='ident'>device</span>::<span class='ident'>Device</span>;
+<span class='kw'>use</span> <span class='ident'>udev</span>::<span class='ident'>udev</span>::<span class='ident'>Udev</span>;
+<span class='kw'>use</span> <span class='ident'>udev</span>::<span class='ident'>device</span>::<span class='ident'>Device</span>;
 
 
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Monitor</span><span class='op'>&lt;</span><span class='lifetime'>&#39;u</span><span class='op'>&gt;</span> {
@@ -220,6 +225,7 @@
     <span class='kw'>pub</span> <span class='ident'>seqnum</span>: <span class='ident'>u64</span>
 }
 
+<span class='attribute'>#[<span class='ident'>doc</span>(<span class='ident'>hidden</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>MonitorIterator</span><span class='op'>&lt;</span><span class='lifetime'>&#39;m</span>, <span class='lifetime'>&#39;u</span>: <span class='lifetime'>&#39;m</span><span class='op'>&gt;</span> {
     <span class='ident'>monitor</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;m</span> <span class='ident'>Monitor</span><span class='op'>&lt;</span><span class='lifetime'>&#39;u</span><span class='op'>&gt;</span>
 }
@@ -373,13 +379,13 @@
     
 
     <script>
-        window.rootPath = "../../../../../../../../";
+        window.rootPath = "../../../../../../../../../";
         window.currentCrate = "udev";
         window.playgroundUrl = "";
     </script>
-    <script src="../../../../../../../../jquery.js"></script>
-    <script src="../../../../../../../../main.js"></script>
+    <script src="../../../../../../../../../jquery.js"></script>
+    <script src="../../../../../../../../../main.js"></script>
     
-    <script async src="../../../../../../../../search-index.js"></script>
+    <script async src="../../../../../../../../../search-index.js"></script>
 </body>
 </html>
