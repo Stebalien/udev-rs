@@ -1,51 +1,52 @@
 #![feature(unsafe_destructor, if_let)]
 extern crate libc;
 
-pub use udev::Udev;
-pub use hwdb::{
-    Hwdb,
-    HwdbQuery,
-};
-pub use device::{
-    Device,
-    Devnum,
-    DeviceType,
-};
-pub use enumerator::{
-    Enumerator,
-    DeviceIterator,
-};
-pub use monitor::{
-    Monitor,
-    MonitorIterator,
-    Event,
+pub use udev::udev::Udev;
 
-    // My kingdome for a scope
-    Action,
-    AddAction,
-    RemoveAction,
-    ChangeAction,
-    MoveAction,
-    OfflineAction,
-    OnlineAction,
-    OtherAction,
-};
-
-pub use iterator::{
-    KeyValueIterator,
-    KeyOptValueIterator,
-    KeyIterator,
-    PathIterator,
-};
-
-mod libudev_c;
 mod udev;
-mod hwdb;
-mod util;
-mod device;
-mod enumerator;
-mod monitor;
-mod iterator;
+
+pub mod hwdb {
+    pub use udev::hwdb::{
+        Hwdb,
+        HwdbQuery,
+        HwdbIterator,
+    };
+}
+pub mod device {
+    pub use udev::device::{
+        Device,
+        Devnum,
+        DeviceType,
+        TagIterator,
+        AttributeIterator,
+        DevlinkIterator,
+        PropertyIterator,
+    };
+}
+pub mod enumerator {
+    pub use udev::enumerator::{
+        Enumerator,
+        DeviceIterator,
+        DevicePathIterator,
+    };
+}
+pub mod monitor {
+    pub use udev::monitor::{
+        Monitor,
+        MonitorIterator,
+        Event,
+
+        // My kingdome for a scope
+        Action,
+        AddAction,
+        RemoveAction,
+        ChangeAction,
+        MoveAction,
+        OfflineAction,
+        OnlineAction,
+        OtherAction,
+    };
+}
 
 #[test]
 fn test_ttys() {
