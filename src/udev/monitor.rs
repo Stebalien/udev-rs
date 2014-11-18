@@ -1,5 +1,5 @@
 use std::ptr;
-use std::from_str::FromStr;
+use std::str::FromStr;
 
 use udev::{
     device,
