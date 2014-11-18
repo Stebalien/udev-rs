@@ -29,8 +29,8 @@ pub type PropertyIterator<'p> = MappedIterator<'p, Device<'p>, (&'p str, Option<
 
 pub type Devnum = dev_t;
 pub enum DeviceType {
-    CharDev,
-    BlockDev
+    Char,
+    Block
 }
 
 // Crate Private
@@ -242,8 +242,8 @@ impl<'u> fmt::Show for Device<'u> {
 impl DeviceType {
     pub fn to_char(self) -> i8 {
         match self {
-            CharDev => 'c' as i8,
-            BlockDev => 'b' as i8
+            DeviceType::Char => 'c' as i8,
+            DeviceType::Block => 'b' as i8
         }
     }
 }

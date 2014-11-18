@@ -1,4 +1,4 @@
-#![feature(unsafe_destructor, if_let)]
+#![feature(unsafe_destructor, if_let, globs)]
 extern crate libc;
 
 pub use udev::udev::Udev;
@@ -35,16 +35,7 @@ pub mod monitor {
         Monitor,
         MonitorIterator,
         Event,
-
-        // My kingdome for a scope
         Action,
-        AddAction,
-        RemoveAction,
-        ChangeAction,
-        MoveAction,
-        OfflineAction,
-        OnlineAction,
-        OtherAction,
     };
 }
 
