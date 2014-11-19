@@ -14,7 +14,7 @@ use udev::udev::Udev;
 use udev::iterator::MappedIterator;
 
 pub struct Device<'u> {
-    pub udev: &'u Udev,
+    udev: &'u Udev,
     dev: libudev_c::udev_device,
 }
 
@@ -43,6 +43,11 @@ pub unsafe fn device_get_dev(device: &Device) -> libudev_c::udev_device {
 }
 
 impl<'u> Device<'u> {
+    /// Get the udev context.
+    pub fn udev(&self) -> &Udev {
+        self.udev
+    }
+
     /// Get the device's parent if one exists.
     pub fn parent(&self) -> Option<Device> {
         match util::check_errno(|| unsafe {

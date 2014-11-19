@@ -10,12 +10,12 @@ use udev::udev::Udev;
 pub type HwdbIterator<'p> = MappedIterator<'p, Hwdb<'p>, (&'p str, &'p str)>;
 
 pub struct Hwdb<'u> {
-    pub udev: &'u Udev,
+    udev: &'u Udev,
     hwdb: libudev_c::udev_hwdb
 }
 
 pub struct HwdbQuery<'h, 'u: 'h> {
-    pub hwdb: &'h mut Hwdb<'u>,
+    hwdb: &'h mut Hwdb<'u>,
     entry: libudev_c::udev_list_entry
 }
 
@@ -25,6 +25,11 @@ pub unsafe fn hwdb(udev: &Udev, hwdb: libudev_c::udev_hwdb) -> Hwdb {
 }
 
 impl<'u> Hwdb<'u> {
+    /// Get the udev context.
+    pub fn udev(&self) -> &Udev {
+        self.udev
+    }
+
     /// Query the hardware database.
     ///
     /// # Note

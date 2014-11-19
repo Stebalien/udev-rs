@@ -14,7 +14,7 @@ use udev::iterator::{
 };
 
 pub struct Enumerator<'u> {
-    pub udev: &'u Udev,
+    udev: &'u Udev,
     enumerator: libudev_c::udev_enumerate
 }
 
@@ -32,6 +32,11 @@ pub type DeviceIterator<'e, 'u: 'e> = FilterMappedIterator<'e, Enumerator<'u>, D
 pub type DevicePathIterator<'p> = MappedIterator<'p, Enumerator<'p>, Path>;
 
 impl<'u> Enumerator<'u> {
+    /// Get the udev context.
+    pub fn udev(&self) -> &Udev {
+        self.udev
+    }
+
     /// Include devices with the specified subsystem.
     ///
     /// All devices added by future scans will match either the specified subsystem or a subsystem

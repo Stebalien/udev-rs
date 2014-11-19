@@ -12,9 +12,8 @@ use udev::{
 
 // Create private.
 pub struct UdevIterator<'p, Sized? T: 'p> {
-    #[allow(unused)]
-    pub parent: &'p T,
-    pub entry: libudev_c::udev_list_entry
+    parent: &'p T,
+    entry: libudev_c::udev_list_entry
 }
 
 impl<'p, Sized? T> Iterator<(&'p T, &'p str, Option<&'p str>)> for UdevIterator<'p, T> {

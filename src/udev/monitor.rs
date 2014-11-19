@@ -12,7 +12,7 @@ use udev::device::Device;
 
 
 pub struct Monitor<'u> {
-    pub udev: &'u Udev,
+    udev: &'u Udev,
     monitor: libudev_c::udev_monitor
 }
 
@@ -46,6 +46,11 @@ pub unsafe fn monitor(udev: &Udev, monitor: libudev_c::udev_monitor) -> Monitor 
 }
 
 impl<'u> Monitor<'u> {
+    /// Get the udev context.
+    pub fn udev(&self) -> &Udev {
+        self.udev
+    }
+
     /// Filter by subsystem.
     ///
     /// Exclude devices that don't match the specified subsystem or a previously specified
