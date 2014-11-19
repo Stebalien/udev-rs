@@ -196,8 +196,6 @@
 <span id='154'>154</span>
 <span id='155'>155</span>
 <span id='156'>156</span>
-<span id='157'>157</span>
-<span id='158'>158</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>kinds</span>::<span class='ident'>marker</span>::<span class='ident'>NoSync</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>io</span>::<span class='ident'>IoError</span>;
@@ -214,8 +212,6 @@
 
 <span class='kw'>use</span> <span class='ident'>udev</span>::<span class='ident'>device</span>::{
     <span class='ident'>Device</span>,
-    <span class='ident'>DeviceType</span>,
-    <span class='ident'>Devnum</span>
 };
 <span class='kw'>use</span> <span class='ident'>udev</span>::<span class='ident'>hwdb</span>::<span class='ident'>Hwdb</span>;
 <span class='kw'>use</span> <span class='ident'>udev</span>::<span class='ident'>monitor</span>::<span class='ident'>Monitor</span>;
@@ -322,7 +318,7 @@
     }
 
     <span class='doccomment'>/// Lookup a device by device type and device number.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>device_from_devnum</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>ty</span>: <span class='ident'>DeviceType</span>, <span class='ident'>devnum</span>: <span class='ident'>Devnum</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Device</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>device_from_devnum</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>ty</span>: <span class='ident'>device</span>::<span class='ident'>Type</span>, <span class='ident'>devnum</span>: <span class='ident'>device</span>::<span class='ident'>Devnum</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Device</span><span class='op'>&gt;</span> {
         <span class='kw'>match</span> <span class='ident'>util</span>::<span class='ident'>check_errno</span>(<span class='op'>||</span> <span class='kw'>unsafe</span> {
             <span class='ident'>libudev_c</span>::<span class='ident'>udev_device_new_from_devnum</span>(<span class='self'>self</span>.<span class='ident'>udev</span>, <span class='ident'>ty</span>.<span class='ident'>to_char</span>(), <span class='ident'>devnum</span>)
         }) {

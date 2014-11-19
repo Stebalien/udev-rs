@@ -107,13 +107,8 @@
 <span id='65'>65</span>
 <span id='66'>66</span>
 <span id='67'>67</span>
-<span id='68'>68</span>
-<span id='69'>69</span>
-<span id='70'>70</span>
-<span id='71'>71</span>
-<span id='72'>72</span>
 </pre><pre class='rust '>
-<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>feature</span>(<span class='ident'>unsafe_destructor</span>, <span class='ident'>if_let</span>)]</span>
+<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>feature</span>(<span class='ident'>unsafe_destructor</span>, <span class='ident'>if_let</span>, <span class='ident'>globs</span>)]</span>
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>libc</span>;
 
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>udev</span>::<span class='ident'>udev</span>::<span class='ident'>Udev</span>;
@@ -123,7 +118,8 @@
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>hwdb</span> {
     <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>udev</span>::<span class='ident'>hwdb</span>::{
         <span class='ident'>Hwdb</span>,
-        <span class='ident'>HwdbQuery</span>,
+        <span class='ident'>Query</span>,
+
         <span class='ident'>HwdbIterator</span>,
     };
 }
@@ -131,7 +127,8 @@
     <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>udev</span>::<span class='ident'>device</span>::{
         <span class='ident'>Device</span>,
         <span class='ident'>Devnum</span>,
-        <span class='ident'>DeviceType</span>,
+        <span class='ident'>Type</span>,
+
         <span class='ident'>TagIterator</span>,
         <span class='ident'>AttributeIterator</span>,
         <span class='ident'>DevlinkIterator</span>,
@@ -141,6 +138,7 @@
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>enumerator</span> {
     <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>udev</span>::<span class='ident'>enumerator</span>::{
         <span class='ident'>Enumerator</span>,
+
         <span class='ident'>DeviceIterator</span>,
         <span class='ident'>DevicePathIterator</span>,
     };
@@ -148,18 +146,10 @@
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>monitor</span> {
     <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>udev</span>::<span class='ident'>monitor</span>::{
         <span class='ident'>Monitor</span>,
-        <span class='ident'>MonitorIterator</span>,
         <span class='ident'>Event</span>,
-
-        <span class='comment'>// My kingdome for a scope</span>
         <span class='ident'>Action</span>,
-        <span class='ident'>AddAction</span>,
-        <span class='ident'>RemoveAction</span>,
-        <span class='ident'>ChangeAction</span>,
-        <span class='ident'>MoveAction</span>,
-        <span class='ident'>OfflineAction</span>,
-        <span class='ident'>OnlineAction</span>,
-        <span class='ident'>OtherAction</span>,
+
+        <span class='ident'>MonitorIterator</span>,
     };
 }
 

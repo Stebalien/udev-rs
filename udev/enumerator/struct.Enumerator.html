@@ -44,12 +44,12 @@
 <h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>udev</a>::<wbr><a href='index.html'>enumerator</a>::<wbr><a class='struct' href=''>Enumerator</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]
             </a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-2511' href='../../src/udev/udev/enumerator.rs.html#16-19'>[src]</a></span></h1>
+        </span><a id='src-2531' href='../../src/udev/udev/enumerator.rs.html#16-19'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Enumerator&lt;'u&gt; {
-    pub udev: &amp;'u <a class='struct' href='../../udev/struct.Udev.html' title='udev::Udev'>Udev</a>,
     // some fields omitted
-}</pre><h2 class='fields'>Fields</h2>
-<table><tr><td id='structfield.udev'><a class='stability Unmarked' title='No stability level'></a><code>udev</code></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;'u&gt; <a class='struct' href='../../udev/enumerator/struct.Enumerator.html' title='udev::enumerator::Enumerator'>Enumerator</a>&lt;'u&gt;</code></h3><div class='impl-methods'><h4 id='method.match_subsystem' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.match_subsystem' class='fnname'>match_subsystem</a>(self, subsystem: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='struct' href='../../udev/enumerator/struct.Enumerator.html' title='udev::enumerator::Enumerator'>Enumerator</a>&lt;'u&gt;</code></h4>
+}</pre><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;'u&gt; <a class='struct' href='../../udev/enumerator/struct.Enumerator.html' title='udev::enumerator::Enumerator'>Enumerator</a>&lt;'u&gt;</code></h3><div class='impl-methods'><h4 id='method.udev' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.udev' class='fnname'>udev</a>(&amp;self) -&gt; &amp;<a class='struct' href='../../udev/struct.Udev.html' title='udev::Udev'>Udev</a></code></h4>
+<div class='docblock'><p>Get the udev context.</p>
+</div><h4 id='method.match_subsystem' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.match_subsystem' class='fnname'>match_subsystem</a>(self, subsystem: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='struct' href='../../udev/enumerator/struct.Enumerator.html' title='udev::enumerator::Enumerator'>Enumerator</a>&lt;'u&gt;</code></h4>
 <div class='docblock'><p>Include devices with the specified subsystem.</p>
 
 <p>All devices added by future scans will match either the specified subsystem or a subsystem

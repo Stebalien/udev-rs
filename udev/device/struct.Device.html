@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>udev</a>::<wbr><a href='index.html'>device</a></p><div class='block struct'><h2>Structs</h2><a class='struct current' href='struct.Device.html'>Device</a></div><div class='block enum'><h2>Enums</h2><a class='enum ' href='enum.DeviceType.html'>DeviceType</a></div>
+        <p class='location'><a href='../index.html'>udev</a>::<wbr><a href='index.html'>device</a></p><div class='block struct'><h2>Structs</h2><a class='struct current' href='struct.Device.html'>Device</a></div><div class='block enum'><h2>Enums</h2><a class='enum ' href='enum.Type.html'>Type</a></div>
     </section>
 
     <nav class="sub">
@@ -44,12 +44,12 @@
 <h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>udev</a>::<wbr><a href='index.html'>device</a>::<wbr><a class='struct' href=''>Device</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]
             </a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-1556' href='../../src/udev/udev/device.rs.html#16-19'>[src]</a></span></h1>
+        </span><a id='src-1565' href='../../src/udev/udev/device.rs.html#16-19'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Device&lt;'u&gt; {
-    pub udev: &amp;'u <a class='struct' href='../../udev/struct.Udev.html' title='udev::Udev'>Udev</a>,
     // some fields omitted
-}</pre><h2 class='fields'>Fields</h2>
-<table><tr><td id='structfield.udev'><a class='stability Unmarked' title='No stability level'></a><code>udev</code></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;'u&gt; <a class='struct' href='../../udev/device/struct.Device.html' title='udev::device::Device'>Device</a>&lt;'u&gt;</code></h3><div class='impl-methods'><h4 id='method.parent' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.parent' class='fnname'>parent</a>(&amp;self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../udev/device/struct.Device.html' title='udev::device::Device'>Device</a>&gt;</code></h4>
+}</pre><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;'u&gt; <a class='struct' href='../../udev/device/struct.Device.html' title='udev::device::Device'>Device</a>&lt;'u&gt;</code></h3><div class='impl-methods'><h4 id='method.udev' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.udev' class='fnname'>udev</a>(&amp;self) -&gt; &amp;<a class='struct' href='../../udev/struct.Udev.html' title='udev::Udev'>Udev</a></code></h4>
+<div class='docblock'><p>Get the udev context.</p>
+</div><h4 id='method.parent' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.parent' class='fnname'>parent</a>(&amp;self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../udev/device/struct.Device.html' title='udev::device::Device'>Device</a>&gt;</code></h4>
 <div class='docblock'><p>Get the device&#39;s parent if one exists.</p>
 </div><h4 id='method.parent_with_subsystem' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.parent_with_subsystem' class='fnname'>parent_with_subsystem</a>(&amp;self, subsystem: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../udev/device/struct.Device.html' title='udev::device::Device'>Device</a>&gt;</code></h4>
 <div class='docblock'><p>Get the first parent with the specified subsystem.</p>
@@ -57,7 +57,7 @@
 <div class='docblock'><p>Get the first parent with the specified subsystem and devtype.</p>
 </div><h4 id='method.attribute' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.attribute' class='fnname'>attribute</a>&lt;'s&gt;(&amp;'s self, attr: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;&amp;'s <a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, <a class='struct' href='http://doc.rust-lang.org/nightly/std/io/struct.IoError.html' title='std::io::IoError'>IoError</a>&gt;</code></h4>
 <div class='docblock'><p>Read a sysfs attribute.</p>
-</div><h4 id='method.set_attribute' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.set_attribute' class='fnname'>set_attribute</a>(&amp;self, attr: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, value: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.unit.html'>()</a>, <a class='struct' href='http://doc.rust-lang.org/nightly/std/io/struct.IoError.html' title='std::io::IoError'>IoError</a>&gt;</code></h4>
+</div><h4 id='method.set_attribute' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.set_attribute' class='fnname'>set_attribute</a>(&amp;self, attr: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, value: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='struct' href='http://doc.rust-lang.org/nightly/std/io/struct.IoError.html' title='std::io::IoError'>IoError</a>&gt;</code></h4>
 <div class='docblock'><p>Write a sysfs attribute.</p>
 </div><h4 id='method.devpath' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.devpath' class='fnname'>devpath</a>&lt;'s&gt;(&amp;'s self) -&gt; &amp;'s <a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a></code></h4>
 <div class='docblock'><p>Get the path to the device (minus <code>/sys</code>).</p>

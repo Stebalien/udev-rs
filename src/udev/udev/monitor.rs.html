@@ -189,9 +189,16 @@
 <span id='147'>147</span>
 <span id='148'>148</span>
 <span id='149'>149</span>
+<span id='150'>150</span>
+<span id='151'>151</span>
+<span id='152'>152</span>
+<span id='153'>153</span>
+<span id='154'>154</span>
+<span id='155'>155</span>
+<span id='156'>156</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>ptr</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>from_str</span>::<span class='ident'>FromStr</span>;
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>str</span>::<span class='ident'>FromStr</span>;
 
 <span class='kw'>use</span> <span class='ident'>udev</span>::{
     <span class='ident'>device</span>,
@@ -204,19 +211,19 @@
 
 
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Monitor</span><span class='op'>&lt;</span><span class='lifetime'>&#39;u</span><span class='op'>&gt;</span> {
-    <span class='kw'>pub</span> <span class='ident'>udev</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;u</span> <span class='ident'>Udev</span>,
+    <span class='ident'>udev</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;u</span> <span class='ident'>Udev</span>,
     <span class='ident'>monitor</span>: <span class='ident'>libudev_c</span>::<span class='ident'>udev_monitor</span>
 }
 
 <span class='attribute'>#[<span class='ident'>deriving</span>(<span class='ident'>Show</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Action</span> {
-    <span class='ident'>AddAction</span>,
-    <span class='ident'>RemoveAction</span>,
-    <span class='ident'>ChangeAction</span>,
-    <span class='ident'>MoveAction</span>,
-    <span class='ident'>OnlineAction</span>,
-    <span class='ident'>OfflineAction</span>,
-    <span class='ident'>OtherAction</span>(<span class='ident'>String</span>)
+    <span class='ident'>Add</span>,
+    <span class='ident'>Remove</span>,
+    <span class='ident'>Change</span>,
+    <span class='ident'>Move</span>,
+    <span class='ident'>Online</span>,
+    <span class='ident'>Offline</span>,
+    <span class='ident'>Other</span>(<span class='ident'>String</span>)
 }
 
 <span class='attribute'>#[<span class='ident'>deriving</span>(<span class='ident'>Show</span>)]</span>
@@ -238,6 +245,11 @@
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;u</span><span class='op'>&gt;</span> <span class='ident'>Monitor</span><span class='op'>&lt;</span><span class='lifetime'>&#39;u</span><span class='op'>&gt;</span> {
+    <span class='doccomment'>/// Get the udev context.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>udev</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>Udev</span> {
+        <span class='self'>self</span>.<span class='ident'>udev</span>
+    }
+
     <span class='doccomment'>/// Filter by subsystem.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// Exclude devices that don&#39;t match the specified subsystem or a previously specified</span>
@@ -305,14 +317,16 @@
 
 <span class='kw'>impl</span> <span class='ident'>FromStr</span> <span class='kw'>for</span> <span class='ident'>Action</span> {
     <span class='kw'>fn</span> <span class='ident'>from_str</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Action</span><span class='op'>&gt;</span> {
+        <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>Action</span>::<span class='op'>*</span>;
+
         <span class='kw'>match</span> <span class='ident'>s</span> {
-            <span class='string'>&quot;add&quot;</span>       <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>AddAction</span>),
-            <span class='string'>&quot;remove&quot;</span>    <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>RemoveAction</span>),
-            <span class='string'>&quot;change&quot;</span>    <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>ChangeAction</span>),
-            <span class='string'>&quot;move&quot;</span>      <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>MoveAction</span>),
-            <span class='string'>&quot;online&quot;</span>    <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>OnlineAction</span>),
-            <span class='string'>&quot;offline&quot;</span>   <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>OfflineAction</span>),
-            _           <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>OtherAction</span>(<span class='ident'>s</span>.<span class='ident'>to_string</span>())),
+            <span class='string'>&quot;add&quot;</span>       <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>Add</span>),
+            <span class='string'>&quot;remove&quot;</span>    <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>Remove</span>),
+            <span class='string'>&quot;change&quot;</span>    <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>Change</span>),
+            <span class='string'>&quot;move&quot;</span>      <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>Move</span>),
+            <span class='string'>&quot;online&quot;</span>    <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>Online</span>),
+            <span class='string'>&quot;offline&quot;</span>   <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>Offline</span>),
+            _           <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>Other</span>(<span class='ident'>s</span>.<span class='ident'>to_string</span>())),
         }
     }
 }
