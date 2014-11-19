@@ -14,7 +14,7 @@ pub struct Hwdb<'u> {
     hwdb: libudev_c::udev_hwdb
 }
 
-pub struct HwdbQuery<'h, 'u: 'h> {
+pub struct Query<'h, 'u: 'h> {
     hwdb: &'h mut Hwdb<'u>,
     entry: libudev_c::udev_list_entry
 }
@@ -35,20 +35,20 @@ impl<'u> Hwdb<'u> {
     /// # Note
     ///
     /// Only one query can exist at a time.
-    pub fn query<'s>(&'s mut self, modalias: &str) -> HwdbQuery<'s, 'u> {
+    pub fn query<'s>(&'s mut self, modalias: &str) -> Query<'s, 'u> {
         // HACK: take reference here because we can't reference self.hwdb inside the closure.
         let entry = modalias.with_c_str(|modalias| {
             unsafe { libudev_c::udev_hwdb_get_properties_list_entry(self.hwdb, modalias) }
         });
 
-        HwdbQuery {
+        Query {
             hwdb: self,
             entry: entry
         }
     }
 }
 
-impl<'h, 'u> HwdbQuery<'h, 'u> {
+impl<'h, 'u> Query<'h, 'u> {
     /// Iterate over the properties returned by this query.
     pub fn iter(&self) -> HwdbIterator {
         unsafe {

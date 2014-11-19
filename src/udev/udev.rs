@@ -13,8 +13,6 @@ use udev::{
 
 use udev::device::{
     Device,
-    DeviceType,
-    Devnum
 };
 use udev::hwdb::Hwdb;
 use udev::monitor::Monitor;
@@ -121,7 +119,7 @@ impl Udev {
     }
 
     /// Lookup a device by device type and device number.
-    pub fn device_from_devnum(&self, ty: DeviceType, devnum: Devnum) -> Option<Device> {
+    pub fn device_from_devnum(&self, ty: device::Type, devnum: device::Devnum) -> Option<Device> {
         match util::check_errno(|| unsafe {
             libudev_c::udev_device_new_from_devnum(self.udev, ty.to_char(), devnum)
         }) {

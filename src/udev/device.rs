@@ -28,7 +28,7 @@ pub type DevlinkIterator<'p> = MappedIterator<'p, Device<'p>, Path>;
 pub type PropertyIterator<'p> = MappedIterator<'p, Device<'p>, (&'p str, Option<&'p str>)>;
 
 pub type Devnum = dev_t;
-pub enum DeviceType {
+pub enum Type {
     Char,
     Block
 }
@@ -244,11 +244,11 @@ impl<'u> fmt::Show for Device<'u> {
     }
 }
 
-impl DeviceType {
+impl Type {
     pub fn to_char(self) -> i8 {
         match self {
-            DeviceType::Char => 'c' as i8,
-            DeviceType::Block => 'b' as i8
+            Type::Char => 'c' as i8,
+            Type::Block => 'b' as i8
         }
     }
 }

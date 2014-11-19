@@ -8,7 +8,8 @@ mod udev;
 pub mod hwdb {
     pub use udev::hwdb::{
         Hwdb,
-        HwdbQuery,
+        Query,
+
         HwdbIterator,
     };
 }
@@ -16,7 +17,8 @@ pub mod device {
     pub use udev::device::{
         Device,
         Devnum,
-        DeviceType,
+        Type,
+
         TagIterator,
         AttributeIterator,
         DevlinkIterator,
@@ -26,6 +28,7 @@ pub mod device {
 pub mod enumerator {
     pub use udev::enumerator::{
         Enumerator,
+
         DeviceIterator,
         DevicePathIterator,
     };
@@ -33,9 +36,10 @@ pub mod enumerator {
 pub mod monitor {
     pub use udev::monitor::{
         Monitor,
-        MonitorIterator,
         Event,
         Action,
+
+        MonitorIterator,
     };
 }
 
