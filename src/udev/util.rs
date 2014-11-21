@@ -1,13 +1,9 @@
-extern crate libc;
-
 use std::raw::Slice;
-use std::intrinsics;
-use libc::{ENOMEM, c_int};
-use std::mem;
-use std::ptr;
-use std;
+use std::{mem, ptr, str};
+use libc::{ENOMEM, c_int, c_char};
+use alloc::oom;
 
-pub unsafe fn c_to_str<'a>(s: *const libc::c_char) -> Option<&'a str> {
+pub unsafe fn c_to_str<'a>(s: *const c_char) -> Option<&'a str> {
     if s.is_null() {
         None
     } else {
@@ -18,13 +14,8 @@ pub unsafe fn c_to_str<'a>(s: *const libc::c_char) -> Option<&'a str> {
             cur = cur.offset(1);
         }
         let slice = mem::transmute(Slice { data: s, len: len });
-        std::str::from_utf8(slice)
+        str::from_utf8(slice)
     }
-}
-
-#[inline(always)]
-pub fn oom() -> ! {
-    unsafe { intrinsics::abort(); }
 }
 
 pub fn handle_error(err: i32) {

@@ -1,4 +1,5 @@
 #![feature(unsafe_destructor, if_let, globs)]
+extern crate alloc;
 extern crate libc;
 
 pub use udev::udev::Udev;

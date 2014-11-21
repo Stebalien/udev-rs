@@ -1,6 +1,7 @@
 use std::kinds::marker::NoSync;
 use std::io::IoError;
 use libc::{fcntl, O_NONBLOCK, F_SETFL, F_GETFL, ENOMEM, EINVAL};
+use alloc::oom;
 
 use udev::{
     device,
@@ -30,7 +31,7 @@ impl Udev {
         let udev = unsafe { libudev_c::udev_new() };
         // I don't care about errno. NULL == oom.
         if udev.is_null() {
-            util::oom();
+            oom();
         }
         Udev { nosync: NoSync, udev: udev }
     }
