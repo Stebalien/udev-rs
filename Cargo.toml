@@ -1,5 +1,15 @@
 [package]
 
 name = "udev"
-version = "0.1.0"
+description = "rust bindings to libudev"
 authors = ["Steven Allen <steven@stebalien.com>"]
+
+repository = "https://github.com/Stebalien/udev-rs"
+homepage = "https://github.com/Stebalien/udev-rs"
+documentation = "https://stebalien.github.io/udev-rs/udev/"
+
+readme = "README.md"
+license = "LGPL-2.1"
+keywords = ["udev", "systemd", "linux", "bindings"]
+
+version = "0.1.0"
