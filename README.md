@@ -1,6 +1,10 @@
 Udev bindings for rust
 ======================
 
+*NOTICE: This library is currently unmaintained. If you would like to take over,
+please file an issue. libudev is poorly designed (and in some places, plain
+broken) so I have given up trying to tame it into a sane rust library.*
+
 These bindings effectivly map one-to-one to libudev (but calling them is much
 simpler/nicer than C).
 
